@@ -28,19 +28,19 @@
 					<section data-markdown>
 						<textarea data-template>
 							# Web Performance
-							### Part 1 - Caching    
+							### Part 2 - First Meaningful Paint
 							<br>
 							<br>
-							<br>
-							Steve Reiter  
-							Contact: DevEdmonton Slack
+							### Steve Reiter  
+							Email: sreiter@dotdash.com  
+							Slack: DevEdmonton / YegSec
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
 							## A little about me
 							<br>
-							- Senior Developer at Investopedia for 2.5 years
+							- Senior Developer at Investopedia for 3 years
 							- Over 13 million unique monthly visitors
 							- ~14,000 active sessions at peak
 							- ~800,000,000 page views in 2017
@@ -48,129 +48,40 @@
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## DotDash
-							<br>
+							<img data-src="images/dotdash.png" class="plain" style="background: none"><br>
 							- Online Publisher
 							- 7 Sites and growing
 							- ~115 million unique monthly visitors across all sites
 							- About 9x more traffic than Investopedia alone
 						</textarea>
 					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## SO like, we do a lot of caching
-						</textarea>
-					</section>
-				</section>
-				<section>
-					<section data-markdown>
-						## Caching Basics
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							### What is a Cache?
-							<br>
-							- Fundamentally just a key/value pair
-							- Anything from in-memory data structure to 3rd party services
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							### When should you cache?
-							<br>
-							- API limits or cost
-							- Speed
-							- Volume
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## How do you use it?
-							<br>
-							#### Check, Fetch, Cache
-							- Check the cache for data
-							- Fetch the data
-							- Cache the data
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Checking the Cache
-							<br>
-							- Build your data request (query, URL, etc.)
-							- Use it as a cache key, hash if needed (Lazy)  
-							<br>
-							**OR**
-							- Generate an appropriate unique key
-							- Keys must match the cardinality of your data requests
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Caching the data
-							- After checking the cache, fetch the data as you normally would
-							- Put the data into the cache using the same key
-							- Add an appropriate expiry time
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## How to pick a Cache Expiry
-							- Valid cache times can range from seconds to days or weeks
-							- Depends on how often the data changes and how frequently you need the data
-							- Caching effectiveness is measured by hit ratio
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## How does the Cache Expire
-							- Many systems will clear items from the cache for you
-								- Browser Cache
-								- Content Delivery Networks
-								- Redis
-								- Memcache
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							### Want to know more about basic caching?
-							<br>
-							## Caching in single page apps for fun and profit
-							Ben Zittlau - Exchange.js May/June 2015
-							https://www.youtube.com/watch?v=pesvdJ2IF3Q
-						</textarea>
-					</section>
 				</section>
 				<section>
 					<section data-markdown>
 						<textarea data-template>
-							## Caching on the web
+							## brief overview of a page load
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## Caching on the web
-							- Browser cache
-							- Content Deliver Networks
-							- Backend caching (Database, API)
-							- Client side caching API data
-							- Response caching (Fastly/Varnish)
-						</textarea>
-					</section>
-				</section>
-				<section>
-					<section data-markdown>
-						<textarea data-template>
-							## The browser cache
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## super brief overview of a page load
+							## Step 1 - Get the Document
 							<br>
-							- Browser fetches the document
-							- Document includes additional resources
-							- Browser fetches and caches resources
+							1. Browser sends domain to DNS service
+							2. DNS service returns an IP
+							3. Browser requests document from the web server at the IP
+							4. Web Server processes the request and returns the document
+							This is the same as when you go "View Source"
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							## Step 2 - Parse the document
+							*When the browser encounters a link, or script, tag; or a non-system font in css, it fetches each of these resources with the same steps.*
+							1. Browser sends domain to DNS service
+							2. DNS service returns an IP
+							3. Browser requests resource from the web server at the IP
+							4. Web Server processes the request and returns the resource
+							5. Browser processes the resource
 						</textarea>
 					</section>
 					<section data-markdown>
@@ -179,194 +90,269 @@
 							<br>
 							<pre><code><link rel="stylesheet" href="/styles/main.css?v=5.866" /></code></pre>
 							<pre><code><script src="/js/article.js?v=5.866"></script></code></pre>
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Good example of basic caching
-							<br>
-							"https://i.investopedia.com/styles/main.css?v=5.866"
-							- The URL is part of the cache key
-							- Version parameter used to invalidate the cache when the resource changes
-							- Also invalidates the cache in Content Deliver Networks (CDN)
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## The browser cache in more detail
-							<br>
-							- Cross-domain (Except Safari)
-							- Common js libraries and fonts are shared
-								- But only if pulled from the same URL
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## It's Actually multiple caches
-							<img data-src="images/caches_all_the_way_down.png">  
-							Source: https://www.fastly.com/blog/understanding-vary-header-browser
+							<pre><code><img src="https://i.investopedia.com/public/fa/img/fg_fa_header_mobile.png"></code></pre>
 						</textarea>
 					</section>
 				</section>
 				<section>
 					<section data-markdown>
 						<textarea data-template>
-							## Response Caching
+							## Round Trips are Expensive!
+							<img data-src="images/nanosecond.jpg"><br>
+							"One Nanosecond!" - Grace Hopper
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## Varnish
-							- Reverse Proxy
-							- Sits in front of your web server
-							- Caches http responses from the web server
-							- The Fastly CDN uses a fork of varnish
+							### Edmonton -> North Virginia
+							Distance: ~ 3200 km<br>
+							Speed of light in Fibre: ~200,000,000 m/s<br>
+							Time: 16ms or 32ms for a round trip
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## Highly Configurable
-							- Varnish Configuration Language (VCL)
-							- Can manipulate headers before passing requests to the backend
-							- Edge Side Includes allow for partial caching
+							- What about hops through routers?
+							- No straight line of fibre from Edm to N. Virginia
+							<br><br>
+							Actual latency is ~80ms.<br><br>
+							<br>
+							In 2 seconds we have time for 25 sequential round trips.
+						</textarea>
+					</section>
+					<section data-markdown>
+						### But what about
+						- TCP handshake (1 round trip)
+						- TLS negotiation (2 round trips)
+						- DNS fetch (1 round trip)
+						<br>
+						It will likely take 3-4 rounds trips for EACH resource...
+					</section>
+					<section data-markdown>
+						### So what should we focus on first?
+						1. Asynchronous fetching
+						2. Reduce the number of resources
+						3. Client side JS performance (If client side rendering)
+					</section>
+					<section data-markdown>
+						### These are also important
+						- More performant image formats
+						- Client side JS performance
+						- Reduce the size of resources
+						- Reduce the size of the document
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						## Measuring Web Performance
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							- Time to First Byte (TTFB)
+							- Time to Last Byte (TTLB)
+							- First CPU Idle
+							- Time to Interactive
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## Cons
-							- Easy to forget about it
-							- New features can cause the cache to be bypassed
-								- Example: Don't cache any set cookie response. New feature sets a cookie... in the site header.
-							- When the cache is bypassed, the web stack is suddenly hit with a huge influx of requests
+							# First Meaningful Paint
+							<br>
+							- "When the primary content of the page is visible"
+							- Somewhat subjective
+							- But, really important for SEO and user experience
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## Real World Example
-							- We don't cache post requests, for obvious reasons
-							- Someone finally decided to DDOS us with post requests...
+							## Lighthouse
+							<br>
+							- Great at identifying what needs to be fixed first
+							- Limited device and bandwitch simulation
+							- Now built in to Chrome
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							## Webpagetest.org
+							<br>
+							- Test your site from specific locations
+							- Test your site from specific devices
+							- Highly detailed graphs
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							## Coverage
+							<br>
+							- Chrome dev tools
+								- Top right menu > More Tools > Coverage
+							- CSS and JS coverage on load
+							- VERY useful when identifying what CSS/JS is needed on page load
+						</textarea>
+					</section>
+				</section>
+				<section>
+					<section data-markdown>
+						## Making things asynchronous
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							Put some hints at the top of the document to help the browser out.<br><br>
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### DNS Prefetch
+							<pre><code><link rel="dns-prefetch" href="//some-3rd-party.com"></code></pre>
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Preconnect
+							<pre><code><link rel="preconnect" href="http://some-3rd-party.com"></code></pre>
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Prefetch
+							<pre><code><link rel="prefetch" href="image.png"></code></pre>
+							<pre><code><link rel="prefetch" href="font.woff2"></code></pre>
+							<pre><code><link rel="prefetch" href="bitcoin-miner.js"></code></pre>
+							Anything that can be cached by the browser.
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### async attribute
+							<pre><code><script src="/js/article.js?v=5.866" async></script></code></pre>
+							- This will cause the js to be downloaded asynchronously.
+							- Browser will pause parsing and execute *immediately* once it has the file.
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### defer attribute
+							<pre><code><script src="/js/article.js?v=5.866" defer></script></code></pre>
+							- This will cause the js to be downloaded asynchronously but run syncronously in the order included on the page.
+							- The script will be executed *after* the document has been parsed but *before* the DOMContentLoaded event.
 						</textarea>
 					</section>
 				</section>
 				<section>
 					<section data-markdown>
 						<textarea data-template>
-							#### Putting it all together
-							<img data-src="images/cache_flow.png">  
+							## Summary
+							- Load everything you can asynchronously
+							- Reduce the number of resources
+							- Load only the CSS and JS that you need
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							## But in Reality
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							When you have an existing site it's often not this simple.
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							You already have CSS and JS. Completely refactoring all of that might not be an option.
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							Remember: The primary goal should be to get a fast First Meaningful Paint and maybe First Interactive.
 						</textarea>
 					</section>
 				</section>
 				<section>
 					<section data-markdown>
 						<textarea data-template>
-							## HTTP Headers
+							## Cheating
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Isolate Critical CSS
+							- Use the chrome coverage to identify CSS used on page load
+							- Move that CSS into a separate file
+							- Focus on "above the fold"
+							- Use HTTP/2 to push the critical CSS
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Defer remaining CSS
+							- loadCSS (https://github.com/filamentgroup/loadCSS/)
+							- Handles browser compatibility for you
+							- Swaps to the new style sheet once downloaded
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### But...
+							- Our infrastructure doesn't support HTTP/2
+							- Other pages break when we pull the CSS out into separate files
+							- Our critical CSS is still 80% unused
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Inline the critical css
+							- On the backend, dump the critical CSS into the document
+							- This increase server response for us... but we have page caching
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### Fixing other page
+							- Use webpack or grunt to combine the critical CSS file with the old CSS file
+							- critical-article.css + article.css = old-article.css
+						</textarea>
+					</section>
+					<section data-markdown>
+						<textarea data-template>
+							### further reducing size of critical css
 							<br>
 							<br>
-							Used to control caching
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Cache Control
-							<pre><code>cache-control: max-age=2592000</code></pre>
-							- Tells the browser how long this should be cached
-							- Browser should use the cache item until this expires
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Cache Control
-							<pre><code>cache-control: public</code></pre>
-							- Indicates that this entity can be cached for all users of the browser
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Cache Control
-							<pre><code>cache-control: private</code></pre>
-							- Indicates that this entity should only be cached for the current user
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Cache Control
-							<pre><code>cache-control: no-cache</code></pre>
-							- Tells the browser to not cache this entity at all
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Entity tag
-							<pre><code>etag: "3278c-5798abbfe3480-gzip"</code></pre>
-							- Response header
-							- Unique ID used to identify a specific version
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## If-match
-							<pre><code>If-Match: "3278c-5798abbfe3480-gzip"</code></pre>
-							- Request header
-							- Represents the entity tag of the currently cached item
-							- Server compares this value to the ETag of the current version
-							- Return a "304 Not Modified" status if unchanged
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Vary
-							<pre><code>vary: Accept-Encoding</code></pre>
-							- Response header
-							- Sets a request header as an additional validator for this cache item
-							- If the request header must match it's value in the request that populated the cache
-							- Also used by CDN's and Varnish
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## Problems with Vary
-							<br>
-							- Can't look at subfields in a header
-							- Not terribly useful for the browser cache, things like user-agent aren't going to change
-						</textarea>
-					</section>
-					<section data-markdown>
-						<textarea data-template>
-							## More info on headers
-							<br>
-							https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
-							- Mozilla has excellent documentation on http headers
+							¯\\\_(ツ)\_/¯
 						</textarea>
 					</section>
 				</section>
 				<section>
 					<section data-markdown>
 						<textarea data-template>
-							## the future
-							<br>
-							Several proposals to improve cache control
+							## More Cheating!
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## HTTP Client Hints
-							<br>
-							- Proposal from Google
-							- Adds additional request headers indicating browser features/settings
-								- Viewport-Width
-								- Device Pixel Ratio
+							### Fonts
+							- Normally you can use a preload directive to loads your fonts early
+							- Google fonts API serves a CSS file that includes the font URLs
+							- The font URLs in that file will be different for each browser/OS combo
 						</textarea>
 					</section>
 					<section data-markdown>
 						<textarea data-template>
-							## Key Header
-							<br>
-							- Another proposal
-							- Similar to vary but allows subfields
-							- Won't end up with multiple cache buckets when you just want to vary on "Accept-Encoding: gzip"
-							<pre><code>accept-encoding: gzip, deflate, br</code></pre>
-							<pre><code>accept-encoding: gzip, br</code></pre>
-							<pre><code>accept-encoding: gzip</code></pre>
+							### Inline the font!
+							- Get the font file for the browser/OS most commonly seen on your site
+							- Edit the font to remove all the symbols you don't really use
+							- Base64 encode the slim font and inline it on the page
+							- Use loadCSS to swap to the full font once it's loaded
+						</textarea>
+					</section>
+					<section>
+					<section data-markdown>
+						<textarea data-template>
+							### Downside to cheating
+							- Wasting our users bandwidth
+							- Harder to maintain the codebase
+							- Removes an incentive to clean up the code
 						</textarea>
 					</section>
 				</section>
